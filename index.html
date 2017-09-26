@@ -1,0 +1,128 @@
+<head>
+  <title>Calculator ADD</title>
+  <link rel="shortcut icon" type="image/pngn" href="favicon.png">
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+  <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+  <script src="https://www.amcharts.com/lib/3/pie.js"></script>
+  <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+  <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+  <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+</head>
+
+<body style="
+  background: gray; /* For browsers that do not support gradients */
+  background: -webkit-linear-gradient(left, gray , #FFFFFF); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(right, gray , #FFFFFF); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(right, gray , #FFFFFF); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(to right, gray , #FFFFFF); /* Standard syntax */
+">
+
+  <center><br><br><br><form id="frm1" style="color:white;font-size:20px;">
+    B: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input type="text" size="4"><br>
+    M: <input type="text" size="4"><br>
+    <span id="eth">E: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input type="text" size="4"><br></span>
+    <span id="lit">L: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input type="text" size="4"><br></span>
+    <span id="dol">D: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input type="text" size="4"><br></span>
+    <span id="ass">As: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input type="text" size="4"><br></span><br>
+    <img src="eth.png" id="ethp" onclick="showeth()" width="30px" height="30px"/>&nbsp&nbsp&nbsp<img src="litecoin.png" onclick="showlit()" id="litp" width="30px" height="30px"/>&nbsp&nbsp&nbsp<img src="dollar.png" id="dolp" onclick="showdol()" width="30px" height="30px"/>&nbsp&nbsp&nbsp<img src="house.png" id="assp" onclick="showass()" width="30px" height="30px"/><br>
+  </form>
+
+<h1 id="three" style="color:white;font-size:50px;"></h1>
+<button onclick="btcprice()" id="idee">OUTPUT TOTAL</button>
+
+<div id="chartdiv" style="width: 100%; height: 500px;"></div>
+
+<br><br><img src="sfs.png" style="z-index:3;"/></center>
+
+<script>
+
+function btcprice() {
+  document.getElementById("chartdiv").style.display = "block";
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', "https://api.coinmarketcap.com/v1/ticker/", true);
+  xhr.send();
+  xhr.onreadystatechange = processRequest;
+
+function processRequest(e) {
+  var x = document.getElementById("frm1");
+  if (xhr.readyState == 4 && xhr.status == 200) {
+    var response = JSON.parse(xhr.responseText);
+      var d =
+    ((x.elements[0].value*(response.find(f => f.id === 'bitcoin').price_usd))) +
+       ((x.elements[1].value*(response.find(g => g.id === 'maidsafecoin').price_usd))) +
+       ((x.elements[2].value*(response.find(t => t.id === 'ethereum').price_usd))) +
+       ((x.elements[3].value*(response.find(z => z.id === 'litecoin').price_usd))) +
+       ((x.elements[4].value*(1))) +
+       ((x.elements[5].value*(1)));
+  };
+  var h = (x.elements[0].value*(response.find(f => f.id === 'bitcoin').price_usd));
+  var hh = (x.elements[1].value*(response.find(g => g.id === 'maidsafecoin').price_usd));
+  var hhh = (x.elements[2].value*(response.find(t => t.id === 'ethereum').price_usd));
+  var gg = (x.elements[3].value*(response.find(z => z.id === 'litecoin').price_usd));
+  var ggg = (x.elements[4].value*(1));
+  var kk = (x.elements[5].value*(1));
+  var chart = AmCharts.makeChart( "chartdiv", {
+"type": "pie",
+"theme": "light",
+"dataProvider": [ {
+  "country": "B",
+  "litres": h
+}, {
+  "country": "M",
+  "litres": hh
+}, {
+  "country": "E",
+  "litres": hhh
+}, {
+  "country": "L",
+  "litres": gg
+}, {
+  "country": "D",
+  "litres": ggg
+}, {
+  "country": "As",
+  "litres": kk
+} ],
+"valueField": "litres",
+"titleField": "country",
+ "balloon":{
+ "fixedPosition":false
+},
+"export": {
+  "enabled": true
+}
+} );
+      d = parseFloat(d).toFixed(2);
+      document.getElementById('three').innerHTML = "$" + d.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
+    // I THINK THE PIE CHART CODE HAS TO GO HERE IN THE FUNCTION!!!
+};
+
+window.onload = function() {
+  document.getElementById("eth").style.display = "none";
+  document.getElementById("lit").style.display = "none";
+  document.getElementById("dol").style.display = "none";
+  document.getElementById("ass").style.display = "none";
+  document.getElementById("chartdiv").style.display = "none";
+};
+
+function showeth() {
+  document.getElementById("eth").style.display = "block";
+  document.getElementById("ethp").style.display = "none";
+};
+function showlit() {
+  document.getElementById("lit").style.display = "block";
+  document.getElementById("litp").style.display = "none";
+};
+function showdol() {
+  document.getElementById("dol").style.display = "block";
+  document.getElementById("dolp").style.display = "none";
+};
+function showass() {
+  document.getElementById("ass").style.display = "block";
+  document.getElementById("assp").style.display = "none";
+};
+
+</script>
+</body>
