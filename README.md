@@ -9,7 +9,7 @@ Add a typable-dropdown like <a href="https://github.com/indrimuska/jquery-editab
 
 # STEP 2
 
-Once you have that box copied onto our site, make it work with the API here. There are 900 entries, and they should display inside the editable dropdown box.
+Once you have that box copied onto our site, make it work with <a href="https://api.coinmarketcap.com/v1/ticker/" target="_blank">THE API here</a>. There are 900 entries, and they should display the ID (name) of each one inside the editable dropdown box.
 
 # STEP 3
 
