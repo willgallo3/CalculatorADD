@@ -5,7 +5,7 @@ View it at: <a href="https://willgallo3.github.io/CalculatorADD">https://willgal
 
 # STEP 1
 
-Add a typable-dropdown like <a href="https://github.com/indrimuska/jquery-editable-select" target="_blank">THIS ONE HERE</a (Web <a href="http://indrimuska.github.io/jquery-editable-select/" target="_blank">DEMO</a>)
+Add a typable-dropdown like <a href="https://github.com/indrimuska/jquery-editable-select" target="_blank">THIS ONE HERE</a> (Web <a href="http://indrimuska.github.io/jquery-editable-select/" target="_blank">DEMO</a>)
 
 # STEP 2
 
