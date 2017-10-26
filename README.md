@@ -1,19 +1,17 @@
 # CalculatorADD
-adds values and returns total with APIs
-
-View it at: <a href="https://willgallo3.github.io/CalculatorADD">https://willgallo3.github.io/CalculatorADD</a>
+Please add in the new features in the /templates/NewFeatures.html file, and then deploy to server
 
 # STEP 1
 
-Add a typable-dropdown like <a href="https://github.com/indrimuska/jquery-editable-select" target="_blank">THIS ONE HERE</a> (Web <a href="http://indrimuska.github.io/jquery-editable-select/" target="_blank">DEMO</a>)
+Open the 'templates' folder and look at the file called 'NEW FEATURES.html' you can compare it to 'home.html' and see that it has some more features available. Please put those new input boxes and JS parts into home.html and make the entries also save to the user's profile with Django.
 
-# STEP 2
+# Step 2
 
-Once you have that box copied onto our site, make it work with <a href="https://api.coinmarketcap.com/v1/ticker/" target="_blank">THE API here</a>. There are 900 entries, and they should display the ID (name) of each one inside the editable dropdown box.
+After the page is working correctly, and the entries are saving to the user's account, I will provide you the DigitalOcean server info for you to ssh into our server and deploy the Django site.
 
-# STEP 3
+# Step 3
 
-Once it is displaying all the ID's (names), make it so when someone clicks it, it displays a new entry box for it like the 2 examples at the top, "Bit" and "Maid" so that people can enter in amounts, and the API gets the value, and it is added to the total. See the code in our index.html <script > tag to see the API code that you can copy for this.
+Please deploy the Django site from our server, and give us a link to the guide you used so we can learn as well. Please just also give us a tip on how to deploy multiple Django websites from the same server. This information is helpful.
 
 # STEP 4 
 
