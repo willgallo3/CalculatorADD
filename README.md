@@ -1,5 +1,5 @@
 # CalculatorADD
-Please add in the new features in the /templates/NewFeatures.html file, and then deploy to server
+Site mostly finished. Please add in the new features in the /templates/NewFeatures.html file, and then deploy to server
 
 # STEP 1
 
