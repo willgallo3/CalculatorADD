@@ -1,0 +1,202 @@
+<head>
+  <title>Calculator ADD</title>
+  <link rel="shortcut icon" type="image/pngn" href="favicon.png">
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+  <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+  <script src="https://www.amcharts.com/lib/3/pie.js"></script>
+  <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+  <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+  <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+  <script src="http://rawgithub.com/indrimuska/jquery-editable-select/master/dist/jquery-editable-select.min.js"></script>
+  <link href="http://rawgithub.com/indrimuska/jquery-editable-select/master/dist/jquery-editable-select.min.css" rel="stylesheet">
+</head>
+
+<body style="
+  background: gray; /* For browsers that do not support gradients */
+  background: -webkit-linear-gradient(left, gray , #FFFFFF); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(right, gray , #FFFFFF); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(right, gray , #FFFFFF); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(to right, gray , #FFFFFF); /* Standard syntax */
+">
+
+    <center><br><br><form id="frm1" style="color:white;font-size:20px;">
+      <div>Bitcoin: <input id="bitcoin" type="text" size="4"></div>
+      <div>Maidsafecoin: <input id="maidsafecoin" type="text" size="4"></div>
+    </form>
+
+
+    <span id = "loading-text">Loading...<br></span>
+    <select style = "display:none" id="editable-select">
+    
+    </select><br><br>
+
+    <b><font color="white">Custom Coin? <button id = "custom-add-button">Add</button><br></font></b><br>
+
+    
+    <form id="frm2"> 
+      
+      
+    </form>
+
+    <h1 id="three" style="color:white;font-size:50px;"></h1>
+    <button id = "output-button">OUTPUT TOTAL</button>
+
+    <div id="chartdiv" style="width: 100%; height: 500px;"></div>
+
+
+
+    <script>
+        $(document).ready(function(){
+            var new_data, d = 0;
+            var myCurrencies = {};
+            var myChartData = [];
+
+            var customTotal = 0;
+            var customChartData = [];
+
+            $("#output-button").click(function() {
+              btcprice();
+            });
+
+            function getCurrencies() {
+              var i= 1;
+              $('#frm1 :input[type=text]').each(function(){
+                  if (i > 2 && $(this).val() == "") {
+                    $(this).parent().remove();
+                    return true;
+                  }
+                  myCurrencies[$(this).attr("id")] = $(this).val();
+                  i++;
+              });
+
+
+              customChartData = [];
+              customTotal = 0;
+              $('.custom-entry').each(function(){
+                  var $this = $(this);
+                  var currencyName = $this.find("input[name = custom-coin-name]").val();
+                  var currencyAmount = $this.find("input[name = custom-coin-amount]").val();
+                  var currencyValue = $this.find("input[name = custom-coin-value]").val();
+
+                  if (currencyName == "" || currencyAmount == "" || currencyValue == "" || isNaN(currencyAmount) || isNaN(currencyValue)) {
+                    $this.remove();
+                    return true;
+                  }
+
+                  var totalAmount = currencyAmount * currencyValue;
+                  customTotal += totalAmount;
+
+                  var data = {currency:currencyName, total:totalAmount};
+                  customChartData.push(data);  
+              });
+            }
+
+            function btcprice() {
+              myCurrencies = {};
+              getCurrencies(); 
+              document.getElementById("chartdiv").style.display = "block";
+              var xhr = new XMLHttpRequest();
+              xhr.open('GET', "https://api.coinmarketcap.com/v1/ticker/", true);
+              xhr.send();
+              xhr.onreadystatechange = processRequest;
+
+              function processRequest(e) {
+                var x = document.getElementById("frm1");
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                  var response = JSON.parse(xhr.responseText);        
+                    d = 0, len = response.length;
+                    var myChartData = [];
+                    for (var i = 0; i < len; i++) {
+                      if (response[i].id in myCurrencies && myCurrencies[response[i].id] != "") {
+                        if(isNaN(Number(myCurrencies[response[i].id]))) {
+                            continue;
+                        }
+                        var temp = (response[i].price_usd * Number(myCurrencies[response[i].id]));
+                        d += temp;
+                        var data = {currency:uppercaseFirst(response[i].id), total:temp};
+                        myChartData.push(data);
+                      }              
+                    }
+                    d += customTotal;
+                    d = parseFloat(d).toFixed(2);
+                    document.getElementById('three').innerHTML = "$" + d.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                
+                };
+
+
+                var chart = AmCharts.makeChart( "chartdiv", {
+                    "type": "pie",
+                    "theme": "light",
+                    "dataProvider": myChartData.concat(customChartData),
+                    "valueField": "total",
+                    "titleField": "currency",
+                    "balloon":{
+                    "fixedPosition":false
+                    },
+                    "export": {
+                      "enabled": true
+                    }
+                });       
+
+
+              };
+
+            };
+
+
+            function showeth() {
+              document.getElementById("eth").style.display = "block";
+              document.getElementById("ethp").style.display = "none";
+            };
+            function showlit() {
+              document.getElementById("lit").style.display = "block";
+              document.getElementById("litp").style.display = "none";
+            };
+            function showdol() {
+              document.getElementById("dol").style.display = "block";
+              document.getElementById("dolp").style.display = "none";
+            };
+            function showass() {
+              document.getElementById("ass").style.display = "block";
+              document.getElementById("assp").style.display = "none";
+            };
+
+
+
+            $.ajax({url: "https://api.coinmarketcap.com/v1/ticker/", success: function(outputfromserver){          
+                var html = "";
+                $.each(outputfromserver, function(index, value) 
+                { 
+                    html += "<option>" + value.id + "</option>";
+                });
+
+                $("#editable-select").html(html).show();
+                $("#loading-text").hide();
+                $('#editable-select').editableSelect().on('select.editable-select', function (e, li) {
+                    new_data = "<div>" + uppercaseFirst(li.text()) + ': <input id = "' + li.text() + '" type="text" size="4"></div>';
+                    $("#frm1").append(new_data);              
+                            
+                });        
+            }});
+
+            function uppercaseFirst(string) 
+            {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            }
+
+            $("#custom-add-button").click(function() {
+                new_data = '<div style = "margin-top: 4px" class = "custom-entry">\
+                              <input name = "custom-coin-name" type="text" placeholder="Enter Coin Name..." />\
+                              <input name = "custom-coin-amount" type="text" placeholder="Enter Amount..." />\
+                              <input name = "custom-coin-value" type="text" placeholder="Enter Value..." />\
+                          </div>';
+                $("#frm2").append(new_data);
+            });
+
+
+        });
+
+    </script>
+
+</body>

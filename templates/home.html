@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}{{profile.user.username}} Home{% endblock title %}
+
+{% block content %}
+<center>
+    {% if profile %}
+    <h2 style="color:white;">{{username}}</h2>
+    {% endif %}
+    <br><br><br>
+    <form id="frm1" style="color:white;font-size:20px;">
+        B: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+        <input id="btc_input" type="text" size="4" value="{{profile.btc}}"><br>
+        M: <input id="msc_input" type="text"size="4" value="{{profile.msc}}"><br>
+        <span id="eth">E: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input id="eth_input" type="text" size="4" value="{{profile.eth}}" ><br></span>
+        <span id="lit">L: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input id="lit_input" type="text" size="4" value="{{profile.lit}}"><br></span>
+        <span id="dol">D: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input id="dol_input" type="text" size="4" value="{{profile.dol}}"><br></span>
+        <span id="ass">As: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            <input id="ass_input" type="text" size="4" value="{{profile.ass}}"><br></span><br>
+
+            <span style="display:None" id="custom">Custom Value:
+                <input type="text" id="custom_amount" placeholder="Amount">
+                <input type="text" id="custom_value" placeholder="Value">
+                <input type="text" id="custom_name" placeholder="Name">
+            </span>
+
+        <br>
+        <input id="username" value="" placeholder="Enter User Name" style="display:none;">
+        <p style="display:None;" id="createaccount_message"></p>
+        <br>
+        <span>Register </span>
+        <input type="radio" name="register" value="no"> No
+        <input type="radio" name="register" value="yes"> Yes
+        <br>
+        <span>Select One</span>
+        <br>
+        <select multiple="true" id="coins">
+            <option value="custom">Custom One</option>
+            <option value="ass">Other Asset</option>
+            <option value="eth">Eth</option>
+            <option value="lit">Lit</option>
+            <option value="dol">Dollors</option>
+        </select>
+        <br><br>
+        {% comment %}
+        <img src="{% static 'images/eth.png'%}" id="ethp" onclick="showeth()" width="30px" height="30px" />&nbsp&nbsp&nbsp<img src="{% static 'images/litecoin.png'%}"
+            onclick="showlit()" id="litp" width="30px" height="30px" />&nbsp&nbsp&nbsp<img src="{% static 'images/dollar.png'%}" id="dolp" onclick="showdol()"
+            width="30px" height="30px" />&nbsp&nbsp&nbsp<img src="{% static 'images/house.png'%}" id="assp" onclick="showass()" width="30px" height="30px"
+        />
+        {% endcomment %}
+        <br>
+    </form>
+
+    <h1 id="three" style="color:white;font-size:50px;"></h1>
+    <button onclick="btcprice()" id="idee">OUTPUT TOTAL</button>
+
+    <div id="chartdiv" style="width: 100%; height: 500px;"></div>
+
+    <br><br><img src="{% static 'images/sfs.png'%}" style="z-index:3;" />
+</center>
+{% endblock content %}
+
+{% block header %}
+<script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+
+{% comment %}
+<link rel="stylesheet" href="{% static 'css/amcharts/export.min.css' %}">
+
+<script src="{% static 'js/angular.min.js' %}" async></script>
+<script src="{% static 'js/amcharts/amcharts.min.js' %}" async></script>
+<script src="{% static 'js/amcharts/pie.min.js' %}" async></script>
+<script src="{% static 'js/amcharts/export.min.js' %}" async></script>
+<script src="{% static 'js/amcharts/light.min.js' %}" async></script>
+{% endcomment %}
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+  <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+  <script src="https://www.amcharts.com/lib/3/pie.js"></script>
+  <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+  <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+  <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $('#coins').change(function(e) {
+            var selected = $(e.target).val();
+            $("#" + selected).show();
+            console.dir(selected);
+        });
+        $("input[name='register']").change(function(e){
+            if($(this).val() == 'yes') {
+                $("#username").show();
+            } else {
+                $("#username").hide();
+            }
+        });
+
+        $("#register_button").click(function(){
+            $("#username").show();
+        });
+        $("#frm1").submit(function(e){
+            return false;
+        });
+        {% if profile %}
+            btcprice();
+        {% endif %}
+    });
+    function btcprice() {
+
+        var username = $("#username").val();
+        var btc = $("#btc_input").val();
+        var msc = $("#msc_input").val();
+        var eth = $("#eth_input").val();
+        var lit = $("#lit_input").val();
+        var dol = $("#dol_input").val();
+        var ass = $("#ass_input").val();
+        if (username){
+            data = {
+                "username": username,
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'btc': btc,
+                'msc': msc,
+                'eth': eth,
+                'lit': lit,
+                'dol': dol,
+                'ass': ass,
+            }
+            $.ajax({
+                url: "{% url 'createuser' %}" ,
+                type: "POST",
+                data: data,
+                success: function(response) {
+                    if (response.status){
+                        $("#createaccount_message").html(response.message);
+                        $("#createaccount_message").show();
+                    }
+                    else{
+                        $("#createaccount_message").html(response.message);
+                        $("#createaccount_message").show();
+                    }
+                    console.log(response.status);
+                }
+            })
+
+        }
+
+        document.getElementById("chartdiv").style.display = "block";
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', "https://api.coinmarketcap.com/v1/ticker/", true);
+        xhr.send();
+        xhr.onreadystatechange = processRequest;
+
+        function processRequest(e) {
+            var custom_amount = $("#custom_amount").val()
+            var custom_value = $("#custom_value").val()
+            var custom_name = $("#custom_name").val()
+            var x = document.getElementById("frm1");
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                var response = JSON.parse(xhr.responseText);
+                var d =
+                    ((x.elements[0].value * (response.find(f => f.id === 'bitcoin').price_usd))) +
+                    ((x.elements[1].value * (response.find(g => g.id === 'maidsafecoin').price_usd))) +
+                    ((x.elements[2].value * (response.find(t => t.id === 'ethereum').price_usd))) +
+                    ((x.elements[3].value * (response.find(z => z.id === 'litecoin').price_usd))) +
+                    ((x.elements[4].value * (1))) +
+                    ((x.elements[5].value * (1)));
+            };
+            var h = (x.elements[0].value * (response.find(f => f.id === 'bitcoin').price_usd));
+            var hh = (x.elements[1].value * (response.find(g => g.id === 'maidsafecoin').price_usd));
+            var hhh = (x.elements[2].value * (response.find(t => t.id === 'ethereum').price_usd));
+            var gg = (x.elements[3].value * (response.find(z => z.id === 'litecoin').price_usd));
+            var ggg = (x.elements[4].value * (1));
+            var kk = (x.elements[5].value * (1));
+            var field_list = [{
+                "country": "B",
+                "litres": h
+            }, {
+                "country": "M",
+                "litres": hh
+            }, {
+                "country": "E",
+                "litres": hhh
+            }, {
+                "country": "L",
+                "litres": gg
+            }, {
+                "country": "D",
+                "litres": ggg
+            }, {
+                "country": "As",
+                "litres": kk
+            }]
+
+            var c_name = "Custom"
+            if (custom_name) {
+                var c_name = custom_name
+            }
+            if (custom_value || custom_amount){
+                total_value = custom_value * custom_amount
+                field_list.push(
+                    {"country": c_name, "litres": total_value}
+                )
+            }
+
+            var chart = AmCharts.makeChart("chartdiv", {
+                "type": "pie",
+                "theme": "light",
+                "dataProvider": field_list,
+                "valueField": "litres",
+                "titleField": "country",
+                "balloon": {
+                    "fixedPosition": false
+                },
+                "export": {
+                    "enabled": true
+                }
+            });
+            if (custom_value || custom_amount){
+                total_value = custom_value * custom_amount
+                d = d + total_value
+            }
+            d = parseFloat(d).toFixed(2);
+            document.getElementById('three').innerHTML = "$" + d.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        };
+        // I THINK THE PIE CHART CODE HAS TO GO HERE IN THE FUNCTION!!!
+    };
+
+    window.onload = function () {
+        document.getElementById("eth").style.display = "none";
+        document.getElementById("lit").style.display = "none";
+        document.getElementById("dol").style.display = "none";
+        document.getElementById("ass").style.display = "none";
+        document.getElementById("chartdiv").style.display = "none";
+    };
+
+    function showeth() {
+        document.getElementById("eth").style.display = "block";
+        document.getElementById("ethp").style.display = "none";
+    };
+    function showlit() {
+        document.getElementById("lit").style.display = "block";
+        document.getElementById("litp").style.display = "none";
+    };
+    function showdol() {
+        document.getElementById("dol").style.display = "block";
+        document.getElementById("dolp").style.display = "none";
+    };
+    function showass() {
+        document.getElementById("ass").style.display = "block";
+        document.getElementById("assp").style.display = "none";
+    };
+</script>
+{% endblock header %}

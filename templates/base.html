@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <title>
+        {% block title %}Home{% endblock title %}
+    </title>
+    <link rel="shortcut icon" type="image/pngn" href="{% static 'images/favicon.png' %}">
+    {% block header %}{% endblock header %}
+</head>
+</html>
+
+<body style="
+    background: gray; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(left, gray , #FFFFFF); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(right, gray , #FFFFFF); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(right, gray , #FFFFFF); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(to right, gray , #FFFFFF); /* Standard syntax */
+">
+    {% block content %}{% endblock content %}
+
+    {% block footer %}{% endblock footer %}
+
+</body>
+
+</html>
